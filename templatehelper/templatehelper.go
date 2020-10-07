@@ -25,6 +25,7 @@ import (
 	"encoding/json"
 	"errors"
 	htmlTemplate "html/template"
+	"reflect"
 	"regexp"
 	"strings"
 	"text/template"
@@ -67,6 +68,28 @@ var (
 				left = 0
 			}
 			return s[left:]
+		},
+		"test": func(cond interface{}, other ...interface{}) (bool, error) {
+			if len(other) > 0 {
+				f := reflect.ValueOf(cond)
+				if f.Kind() != reflect.Func {
+					return false, errors.New("The first argument must be a function")
+				}
+				args := make([]reflect.Value, len(other))
+				for i, arg := range other {
+					args[i] = reflect.ValueOf(arg)
+				}
+				condResult := f.Call(args)
+				if len(condResult) == 0 {
+					return false, errors.New("The function must return something")
+				}
+				cond = condResult[0]
+			}
+			result, ok := template.IsTrue(cond)
+			if !ok {
+				return false, errors.New("Value cannot be interpreted as bool")
+			}
+			return result, nil
 		},
 		"Last": func(items []string) (string, error) {
 			if len(items) == 0 {

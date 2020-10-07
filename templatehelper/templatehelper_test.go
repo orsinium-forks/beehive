@@ -47,6 +47,15 @@ func Test_FuncMap_Positive(t *testing.T) {
 		{`{{if HasSuffix "hello" "lo"}}ok{{end}}`, "ok"},
 		{`{{if HasSuffix "hello" "he"}}ok{{end}}`, ""},
 
+		{`{{test true}}`, "true"},
+		{`{{test false}}`, "false"},
+		{`{{test "a"}}`, "true"},
+		{`{{test ""}}`, "false"},
+		{`{{test 2}}`, "true"},
+		{`{{test 0}}`, "false"},
+		{`{{test eq "hi" "hi"}}`, "true"},
+		{`{{test eq "oh" "hi"}}`, "false"},
+
 		// filters returning a string
 
 		{`{{JSON 123}}`, "[123]"},

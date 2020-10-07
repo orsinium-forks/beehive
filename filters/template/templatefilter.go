@@ -50,11 +50,6 @@ func (filter *TemplateFilter) Passes(data interface{}, value interface{}) bool {
 	case string:
 		var res bytes.Buffer
 
-		if strings.Index(v, "{{test") >= 0 {
-			v = strings.Replace(v, "{{test", "{{if", -1)
-			v += "true{{end}}"
-		}
-
 		tmpl, err := template.New("_" + v).Funcs(templatehelper.FuncMap).Parse(v)
 		if err == nil {
 			err = tmpl.Execute(&res, data)
